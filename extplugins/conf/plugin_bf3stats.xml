@@ -1,0 +1,6 @@
+<configuration plugin="bf3stats">
+    <!-- Commands and Access levels -->
+    <settings name="commands">
+        <set name="bf3stats">20</set>
+    </settings>
+</configuration>
