@@ -68,7 +68,7 @@ class Bf3StatsPlugin(b3.plugin.Plugin):
     ### some helper functions to handle stats data
 
     def get_global_stats(self, player_name):
-        stats, status = self.stats_api.fetch_stats(player_name, 'clear,global')
+        stats, status = self.stats_api.get_player_stats(player_name, 'clear,global')
         stats['global']['kd_ratio'] = stats['global']['kills'] / float(stats['global']['deaths'])
         stats['global']['wl_ratio'] = stats['global']['wins'] / float(stats['global']['losses'])
 
@@ -124,7 +124,7 @@ class Bf3StatsAPI(object):
         return rawdata
 
 
-    def fetch_stats(self, player_name, parts=None):
+    def get_player_stats(self, player_name, parts=None):
         post_data = {'player' : player_name, 'opt' : parts }
         self._plugin.debug('Get Stats for %s from %s, opts: %s ' % ( player_name, self.api_url, parts))
         rawdata = self._http_req(post_data)
