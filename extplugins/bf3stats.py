@@ -49,7 +49,7 @@ class Bf3StatsPlugin(b3.plugin.Plugin):
 
     def cmd_bf3stats(self, data, client, cmd=None):
         """\
-        <player> - show short stats from bf3stats.com
+        [player] - show short stats from bf3stats.com
         """
         short_stats = ''
         if not data:
