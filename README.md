@@ -5,7 +5,7 @@ Display stats from [bf3stats.com](http://bf3stats.com) ingame.
 Installation
 ------------
 - copy the contents of extplugins to b3/extplugins/
-- add `<plugin name="bf3stats" config=""@b3/extplugins/conf/plugin_bf3stats.xml"/>` in you main b3 config file
+- add `<plugin name="bf3stats" config="@b3/extplugins/conf/plugin_bf3stats.xml"/>` in you main b3 config file
 
 Usage
 -----
