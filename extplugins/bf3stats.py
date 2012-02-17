@@ -114,12 +114,20 @@ class Bf3StatsAPI(object):
             rawdata = {'status' : 'fetch_fail'}
 
         # @todo verify status
-        # @todo rquest data update if stats to old
         # @todo cache data
-        return rawdata['stats'], rawdata['status']
+        stats = {}
+        if rawdata['status'] == 'data':
+            # @todo: check date and request refresh if to old
+            stats = rawdata['stats']
+        elif rawdata['status'] == 'notfound':
+            # @todo: request update/find player and try again
+            self._plugin.debug('Player not found.')
+        elif rawdata['status'] == 'error':
+            err = rawdata['error']
+            self._plugin.debug('Error: %s', err)
 
-    def handle_notfound(self):
-        pass
+        return stats, rawdata['status']
+
 
 
 #    def _verify_status(self):
