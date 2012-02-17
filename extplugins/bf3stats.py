@@ -50,9 +50,19 @@ class Bf3StatsPlugin(b3.plugin.Plugin):
     def cmd_bf3stats(self, data, client, cmd=None):
         """Handle !bf3stats command """
         # post own stats
-        global_stats = self.get_pretty_short_stats(client.name)
-        #time.sleep(30)
-        self.console.say(global_stats)
+        short_stats = ''
+        if not data:
+            short_stats = self.get_pretty_short_stats(client.name)
+        else:
+            args = cmd.parseData(data)
+            sclient = self._adminPlugin.findClientPrompt(args[0], client)
+            if not sclient:
+                # no matching player found - exit here
+                return
+            else:
+                short_stats = self.get_pretty_short_stats(sclient.name)
+
+        self.console.say(short_stats)
 
     ### some helper functions to handle stats data
 
