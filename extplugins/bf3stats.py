@@ -48,8 +48,9 @@ class Bf3StatsPlugin(b3.plugin.Plugin):
         self._registerCommands()
 
     def cmd_bf3stats(self, data, client, cmd=None):
-        """Handle !bf3stats command """
-        # post own stats
+        """\
+        <player> - show short stats from bf3stats.com
+        """
         short_stats = ''
         if not data:
             short_stats = self.get_pretty_short_stats(client.name)
