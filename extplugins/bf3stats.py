@@ -111,11 +111,8 @@ class Bf3StatsAPI(object):
         self._statsdata = {}
         self._plugin = plugin
 
-    def fetch_stats(self, player_name, parts=None):
-        post_data = {'player' : player_name, 'opt' : parts }
-        # fetch our data from web
+    def _http_req(self, post_data):
         try:
-            self._plugin.debug('Get Stats for %s from %s, opts: %s ' % ( player_name, self.api_url, parts))
             con = urllib.urlopen(self.api_url, urllib.urlencode(post_data))
             result = con.read()
             con.close()
@@ -124,6 +121,13 @@ class Bf3StatsAPI(object):
             self._plugin.debug('IOError - we have some Network trouble!')
             rawdata = {'status' : 'fetch_fail'}
 
+        return rawdata
+
+
+    def fetch_stats(self, player_name, parts=None):
+        post_data = {'player' : player_name, 'opt' : parts }
+        self._plugin.debug('Get Stats for %s from %s, opts: %s ' % ( player_name, self.api_url, parts))
+        rawdata = self._http_req(post_data)
         # @todo verify status
         # @todo cache data
         stats = {}
