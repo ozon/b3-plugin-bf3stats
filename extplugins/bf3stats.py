@@ -194,6 +194,11 @@ if __name__ == '__main__':
     superadmin.connects(cid=0)
     api = Bf3StatsAPI(myplugin)
 
-    superadmin.says('!bfstats')
-    #print api.fetch_from_api(myplugin.data)
+    def _test_get_player_stats(player='O2ON'):
+        print api.get_player_stats(player)
+
+    def _test_player_update(player='O2ON'):
+        print api.player_update(player)
+
+    #superadmin.says('!bfstats')
 
