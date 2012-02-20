@@ -71,17 +71,24 @@ class Bf3StatsPlugin(b3.plugin.Plugin):
 
     ### some helper functions to handle stats data
 
-    def get_global_stats(self, player_name):
-        stats, status = self.stats_api.get_player_stats(player_name, 'clear,global')
+    def _add_kd(self, stats):
+        """Calc and update stats with K/D and W/L ratio"""
         stats['global']['kd_ratio'] = stats['global']['kills'] / float(stats['global']['deaths'])
         stats['global']['wl_ratio'] = stats['global']['wins'] / float(stats['global']['losses'])
-
-        return stats['global']
+        return stats
 
     def get_pretty_short_stats(self, player_name):
-        """Return short status """
-        stats = self.get_global_stats(player_name)
-        return 'Stats for %s: K/D: %.2f, Killstreak: %d, Skill: %d' % (player_name, stats['kd_ratio'], stats['killstreakbonus'], stats['elo'] )
+        """Return short stats"""
+        # request stats and status
+        stats, status = self.stats_api.get_player_stats(player_name, 'clear,global')
+        if status == 'data':
+            stats = self._add_kd(stats)
+            stats = stats['global']
+            output = 'Stats for %s: K/D: %.2f, Killstreak: %d, Skill: %d' % (player_name, stats['kd_ratio'], stats['killstreakbonus'], stats['elo'] )
+        elif status == 'notfound':
+            output = 'Player not found'
+
+        return output
 
     ### Other missing functions that should be included in B3 ;)
     def _getCmd(self, cmd):
