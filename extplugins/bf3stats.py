@@ -114,10 +114,10 @@ class Bf3StatsAPI(object):
         self.ident = self._plugin.config.get('secrets', 'ident')
 
     def _request(self, post_data, data_group):
+        """Request data from bf3stats.com"""
         url='http://api.bf3stats.com'
         plattform='pc'
         api_url = '%s/%s/%s/' % (url, plattform, data_group)
-
         try:
             con = urllib.urlopen(api_url, urllib.urlencode(post_data))
             result = con.read()
@@ -126,15 +126,13 @@ class Bf3StatsAPI(object):
         except IOError:
             self._plugin.debug('IOError - we have some Network trouble!')
             rawdata = {'status' : 'fetch_fail'}
-
         return rawdata
 
     def _signed_request(self, data_dict, data_group):
-        """ Generate a signed request """
+        """Request data from bf3stats.com with a signed request"""
         data = self._base64_url_encode(json.dumps(data_dict))
         sig = self._base64_url_encode(hmac.new(self.secretKEY, msg=data, digestmod=hashlib.sha256).digest())
         post_data = { 'data': data, 'sig': sig}
-
         return self._request(post_data, data_group)
 
 
@@ -155,15 +153,14 @@ class Bf3StatsAPI(object):
         elif rawdata['status'] == 'error':
             err = rawdata['error']
             self._plugin.debug('Error: %s', err)
-
         return stats, rawdata['status']
 
     def player_update(self, player):
+        """Initiate playerupdate"""
         post_data = {}
         post_data['ident'] = self.ident
         post_data['time'] = int(time.time())
         post_data['player'] = player
-
         return self._signed_request(post_data, data_group='playerupdate')
 
     def _base64_url_encode(self, data):
