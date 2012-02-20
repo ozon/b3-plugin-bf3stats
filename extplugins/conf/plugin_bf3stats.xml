@@ -3,4 +3,10 @@
     <settings name="commands">
         <set name="bf3stats">20</set>
     </settings>
+    <!-- Ident and secret KEYs -->
+    <!-- Visit http://bf3stats.com/site/api/apps -->
+    <settings name="secrets">
+        <set name='ident'></set>
+        <set name='key'></set>
+    </settings>
 </configuration>
