@@ -113,9 +113,13 @@ class Bf3StatsAPI(object):
         self.secretKEY = self._plugin.config.get('secrets', 'key')
         self.ident = self._plugin.config.get('secrets', 'ident')
 
-    def _request(self, post_data):
+    def _request(self, post_data, data_group):
+        url='http://api.bf3stats.com'
+        plattform='pc'
+        api_url = '%s/%s/%s/' % (url, plattform, data_group)
+
         try:
-            con = urllib.urlopen(self.api_url, urllib.urlencode(post_data))
+            con = urllib.urlopen(api_url, urllib.urlencode(post_data))
             result = con.read()
             con.close()
             rawdata = json.loads(result)
@@ -125,19 +129,20 @@ class Bf3StatsAPI(object):
 
         return rawdata
 
-    def _signed_request(self, data_dict):
+    def _signed_request(self, data_dict, data_group):
         """ Generate a signed request """
         data = self._base64_url_encode(json.dumps(data_dict))
         sig = self._base64_url_encode(hmac.new(self.secretKEY, msg=data, digestmod=hashlib.sha256).digest())
-        return self._request(post_data = { 'data': data, 'sig': sig })
+        post_data = { 'data': data, 'sig': sig}
+
+        return self._request(post_data, data_group)
 
 
 
     def get_player_stats(self, player_name, parts=None):
-        self._set_api_url('player')
         post_data = {'player' : player_name, 'opt' : parts }
-        self._plugin.debug('Get Stats for %s from %s, opts: %s ' % ( player_name, self.api_url, parts))
-        rawdata = self._request(post_data)
+        self._plugin.debug('Get Stats for %s , opts: %s ' % ( player_name, parts))
+        rawdata = self._request(post_data, data_group='player')
         # @todo verify status
         # @todo cache data
         stats = {}
@@ -158,19 +163,12 @@ class Bf3StatsAPI(object):
         post_data['ident'] = self.ident
         post_data['time'] = int(time.time())
         post_data['player'] = player
-        self._set_api_url('playerupdate')
-        return self._signed_request(post_data)
 
-    # signet req
+        return self._signed_request(post_data, data_group='playerupdate')
+
     def _base64_url_encode(self, data):
         return base64.urlsafe_b64encode(data).rstrip('=')
 
-
-    def _set_api_url(self, data_group):
-        """ Helper to setup the API URL """
-        url='http://api.bf3stats.com'
-        plattform='pc'
-        self.api_url = '%s/%s/%s/' % (url, plattform, data_group)
 
 
 #    def _verify_status(self):
