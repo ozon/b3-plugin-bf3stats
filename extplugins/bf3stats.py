@@ -27,6 +27,10 @@ import urllib
 import time
 #from datetime import datetime
 
+import base64
+import hashlib
+import hmac
+
 __version__ = '0.1'
 __author= 'ozon'
 
@@ -103,13 +107,11 @@ class Bf3StatsPlugin(b3.plugin.Plugin):
 
 class Bf3StatsAPI(object):
     def __init__(self, plugin):
-        url='http://api.bf3stats.com'
-        plattform='pc'
-        data_group='player'
-        # setup api_url
-        self.api_url = '%s/%s/%s/' % (url, plattform, data_group)
         self._statsdata = {}
         self._plugin = plugin
+        self.api_url = None
+        self.secretKEY = self._plugin.config.get('secrets', 'key')
+        self.ident = self._plugin.config.get('secrets', 'ident')
 
     def _http_req(self, post_data):
         try:
@@ -123,8 +125,16 @@ class Bf3StatsAPI(object):
 
         return rawdata
 
+    def _signed_req(self, data_dict):
+        """ Generate a signed request """
+        data = self._base64_url_encode(json.dumps(data_dict))
+        sig = self._base64_url_encode(hmac.new(self.secretKEY, msg=data, digestmod=hashlib.sha256).digest())
+        return self._http_req(post_data = { 'data': data, 'sig': sig })
+
+
 
     def get_player_stats(self, player_name, parts=None):
+        self._set_api_url('player')
         post_data = {'player' : player_name, 'opt' : parts }
         self._plugin.debug('Get Stats for %s from %s, opts: %s ' % ( player_name, self.api_url, parts))
         rawdata = self._http_req(post_data)
@@ -143,6 +153,24 @@ class Bf3StatsAPI(object):
 
         return stats, rawdata['status']
 
+    def player_update(self, player):
+        post_data = {}
+        post_data['ident'] = self.ident
+        post_data['time'] = int(time.time())
+        post_data['player'] = player
+        self._set_api_url('playerupdate')
+        return self._signed_req(post_data)
+
+    # signet req
+    def _base64_url_encode(self, data):
+        return base64.urlsafe_b64encode(data).rstrip('=')
+
+
+    def _set_api_url(self, data_group):
+        """ Helper to setup the API URL """
+        url='http://api.bf3stats.com'
+        plattform='pc'
+        self.api_url = '%s/%s/%s/' % (url, plattform, data_group)
 
 
 #    def _verify_status(self):
