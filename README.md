@@ -18,55 +18,13 @@ You can use `!bf3stats <playername>` to display stats from other players.
 
 Configuration
 -------------
-With variables can you customize the output of the `!bf3stats` command.
+With [variables](https://github.com/ozon/b3-plugin-bf3stats/wiki/Variables) can you customize the output of the `!bf3stats` command.
 
 The default configuration in plugin_bf3stats.xml:
 `Stats for %(name)s: K/D: %(kd_ratio)s, Killstreak: %(killstreakbonus)s, Skill: %(elo)s`
 This display: `Stats for O2ON: K/D: 1.61, Killstreak: 50, Skill: 592.02`
 
-The following variables can be set:
-
-| __Variable__             | __Description__ |
-| ------------------------ | :-------------- |
-| %(avengerkills)s         | |
-| %(damagaassists)s        | |
-| %(deaths)s               | |
-| %(dogtags)s              | |
-| %(elo)s                  | Skill |
-| %(elo_games)s            | |
-| %(flagcaps)s             | |
-| %(flagdef)s              | |
-| %(headshots)s            | |
-| %(heals)s                | |
-| %(hits)s                 | |
-| %(kd_ratio)s             | |
-| %(killassists)s          | |
-| %(kills)s                | Kills |
-| %(killstreakbonus)s      | Killstreak |
-| %(last_update)s          | |
-| %(longesthandhs)s        | |
-| %(longesths)s            | |
-| %(losses)s               | |
-| %(mcomdefkills)s         | |
-| %(mcomdest)s             | |
-| %(name)s                 | Playername |
-| %(nemesiskills)s         | |
-| %(nemesisstreak)s        | |
-| %(repairs)s              | |
-| %(resupplies)s           | |
-| %(revives)s              | |
-| %(rounds)s               | |
-| %(saviorkills)s          | |
-| %(shots)s                | |
-| %(suppression)s          | |
-| %(time)s                 | |
-| %(vehicledestroyassist)s | |
-| %(vehicledestroyed)s     | |
-| %(vehiclekills)s         | |
-| %(vehicletime)s          | |
-| %(wins)s                 | Wins |
-| %(wl_ratio)s             | Win/Loss Ratio |
-
+A list of available variables you can find in the [wiki](https://github.com/ozon/b3-plugin-bf3stats/wiki/Variables).
 
 Thanks
 ------
