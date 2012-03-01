@@ -8,8 +8,8 @@ Installation
  - `easyinstall -U bf3stats` or down the [bf3stats module](https://github.com/ozon/python-bf3stats/zipball/master) and copy the folder `bf3stats` in your b3 plugin folder
 
 2. install this plugin
- - copy the contents of extplugins to b3/extplugins/
- - add `<plugin name="bf3stats" config="@b3/extplugins/conf/plugin_bf3stats.xml"/>` in you main b3 config file
+ - copy the contents of `extplugins` to `b3/extplugins/`
+ - add `<plugin name="bf3stats" config="@b3/extplugins/conf/plugin_bf3stats.xml"/>` in your main b3 config file
 
 Usage
 -----
