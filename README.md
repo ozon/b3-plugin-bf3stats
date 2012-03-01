@@ -26,46 +26,46 @@ This display: `Stats for O2ON: K/D: 1.61, Killstreak: 50, Skill: 592.02`
 
 The following variables can be set:
 
-| __Variable__            | __Description__ |
-| ----------------------- | :-------------- |
-| (avengerkills)s         | |
-| (damagaassists)s        | |
-| (deaths)s               | |
-| (dogtags)s              | |
-| (elo)s                  | Skill |
-| (elo_games)s            | |
-| (flagcaps)s             | |
-| (flagdef)s              | |
-| (headshots)s            | |
-| (heals)s                | |
-| (hits)s                 | |
-| (kd_ratio)s             | |
-| (killassists)s          | |
-| (kills)s                | Kills |
-| (killstreakbonus)s      | Killstreak |
-| (last_update)s          | |
-| (longesthandhs)s        | |
-| (longesths)s            | |
-| (losses)s               | |
-| (mcomdefkills)s         | |
-| (mcomdest)s             | |
-| (name)s                 | Playername |
-| (nemesiskills)s         | |
-| (nemesisstreak)s        | |
-| (repairs)s              | |
-| (resupplies)s           | |
-| (revives)s              | |
-| (rounds)s               | |
-| (saviorkills)s          | |
-| (shots)s                | |
-| (suppression)s          | |
-| (time)s                 | |
-| (vehicledestroyassist)s | |
-| (vehicledestroyed)s     | |
-| (vehiclekills)s         | |
-| (vehicletime)s          | |
-| (wins)s                 | Wins |
-| (wl_ratio)s             | Win/Loss Ratio |
+| __Variable__             | __Description__ |
+| ------------------------ | :-------------- |
+| %(avengerkills)s         | |
+| %(damagaassists)s        | |
+| %(deaths)s               | |
+| %(dogtags)s              | |
+| %(elo)s                  | Skill |
+| %(elo_games)s            | |
+| %(flagcaps)s             | |
+| %(flagdef)s              | |
+| %(headshots)s            | |
+| %(heals)s                | |
+| %(hits)s                 | |
+| %(kd_ratio)s             | |
+| %(killassists)s          | |
+| %(kills)s                | Kills |
+| %(killstreakbonus)s      | Killstreak |
+| %(last_update)s          | |
+| %(longesthandhs)s        | |
+| %(longesths)s            | |
+| %(losses)s               | |
+| %(mcomdefkills)s         | |
+| %(mcomdest)s             | |
+| %(name)s                 | Playername |
+| %(nemesiskills)s         | |
+| %(nemesisstreak)s        | |
+| %(repairs)s              | |
+| %(resupplies)s           | |
+| %(revives)s              | |
+| %(rounds)s               | |
+| %(saviorkills)s          | |
+| %(shots)s                | |
+| %(suppression)s          | |
+| %(time)s                 | |
+| %(vehicledestroyassist)s | |
+| %(vehicledestroyed)s     | |
+| %(vehiclekills)s         | |
+| %(vehicletime)s          | |
+| %(wins)s                 | Wins |
+| %(wl_ratio)s             | Win/Loss Ratio |
 
 
 Thanks
