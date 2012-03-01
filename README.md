@@ -13,11 +13,8 @@ Installation
 
 Usage
 -----
-Use the command `!bf3stats` ingame to display short stats.
-
-Notes
------
-__This is still alpha stuff!__
+Use the command `!bf3stats` ingame to display your short stats.
+You can use `!bf3stats <playername>` to display stats from other players.
 
 Thanks
 ------
