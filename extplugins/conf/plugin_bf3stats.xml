@@ -3,6 +3,11 @@
     <settings name="commands">
         <set name="bf3stats">20</set>
     </settings>
+    <!-- Messages -->
+    <!-- Some stats Variables provides. Refer the configuration section in the README. -->
+    <settings name="messages">
+        <set name="short_stats">Stats for %(name)s: K/D: %(kd_ratio)s, Killstreak: %(killstreakbonus)s, Skill: %(elo)s</set>
+    </settings>
     <!-- Ident and secret KEYs -->
     <!-- Visit http://bf3stats.com/site/api/apps -->
     <settings name="secrets">

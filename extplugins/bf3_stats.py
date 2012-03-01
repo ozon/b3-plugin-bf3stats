@@ -27,8 +27,6 @@ import time
 
 import bf3stats
 
-
-
 __version__ = '0.1'
 __author= 'ozon'
 
@@ -52,6 +50,9 @@ class Bf3_StatsPlugin(b3.plugin.Plugin):
             self.debug(err)
             self.warning('No bf3stats API key found.')
 
+        # load messages
+        self._messages['short_stats'] = self.config.get('messages', 'short_stats')
+
     def onStartup(self):
         """Initialize plugin settings """
         # try to load admin plugin
@@ -68,9 +69,9 @@ class Bf3_StatsPlugin(b3.plugin.Plugin):
         """\
         [player] - show short stats from bf3stats.com
         """
-        short_stats = ''
+        _stats_container = None
         if not data:
-            short_stats = self.get_pretty_short_stats(client.name)
+            _stats_container = self.get_bf3stats(client.name)
         else:
             args = cmd.parseData(data)
             sclient = self._adminPlugin.findClientPrompt(args[0], client)
@@ -78,28 +79,34 @@ class Bf3_StatsPlugin(b3.plugin.Plugin):
                 # no matching player found - exit here
                 return
             else:
-                short_stats = self.get_pretty_short_stats(sclient.name)
+                _stats_container = self.get_bf3stats(sclient.name)
 
-        self.console.say(short_stats)
+        self.console.say(self.getMessage('short_stats', _stats_container))
+
 
     ### some helper functions to handle stats data
+    def get_bf3stats(self, player_name):
+        """Return a dict with stats from given playername."""
+        _stats_container = None
+        # get stats
+        _player_stats = self._bf3stats.player(player_name, 'clear, global')
+
+        if _player_stats.status == 'data':
+            _stats_container = {
+                    'name': _player_stats.name,
+                    'last_update': _player_stats.date_update,
+                    'kd_ratio': self._calc_ratio(_player_stats.Stats.Global.kills, _player_stats.Stats.Global.deaths),
+                    'wl_ratio': self._calc_ratio(_player_stats.Stats.Global.wins, _player_stats.Stats.Global.losses)
+                    }
+            # update stats_container with stats
+            _stats_container.update(_player_stats.Stats.Global.__dict__)
+
+        return _stats_container
 
     def _calc_ratio(self, win, loss):
         """Calc and return ratio"""
-        return win / float(loss)
-
-    def get_pretty_short_stats(self, player_name):
-        """Return short stats"""
-        # request stats and status
-        player_stats = self._bf3stats.player(player_name, 'clear,global')
-        if player_stats.status == 'data':
-            kd_ratio = self._calc_ratio(player_stats.Stats.Global.kills, player_stats.Stats.Global.deaths)
-            #wl_ratio = self._calc_ratio(player_stats.Stats.Global.wins, player_stats.Stats.Global.losses)
-            output = 'Stats for %s: K/D: %.2f, Killstreak: %d, Skill: %d' % (player_name, kd_ratio, player_stats.Stats.Global.killstreakbonus, player_stats.Stats.Global.elo )
-        elif player_stats.status == 'notfound':
-            output = 'Player not found'
-
-        return output
+        ratio =  win / float(loss)
+        return '%.2f' % ratio
 
     ### Other missing functions that should be included in B3 ;)
     def _getCmd(self, cmd):
