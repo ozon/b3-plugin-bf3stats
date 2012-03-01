@@ -114,11 +114,13 @@ class Bf3StatsPlugin(b3.plugin.Plugin):
 
 class Bf3StatsAPI(object):
     def __init__(self, plugin):
-        self._statsdata = {}
+        self.player_stats = None
         self._plugin = plugin
         self.api_url = None
         self.secretKEY = self._plugin.config.get('secrets', 'key')
         self.ident = self._plugin.config.get('secrets', 'ident')
+        self._playerupdate_results = None
+        self._player_name = None
 
     def _request(self, post_data, data_group):
         """Request data from bf3stats.com"""
@@ -145,51 +147,70 @@ class Bf3StatsAPI(object):
 
 
     def get_player_stats(self, player_name, parts=None):
-        post_data = {'player' : player_name, 'opt' : parts }
-        self._plugin.debug('Get Stats for %s , opts: %s ' % ( player_name, parts))
-        rawdata = self._request(post_data, data_group='player')
-        # @todo verify status
+        self._player_name = player_name
+        post_data = {'player' : self._player_name, 'opt' : parts }
+        self._plugin.debug('Get Stats for %s , opts: %s ' % ( self._player_name, parts))
+        self.rawdata = self._request(post_data, data_group='player')
         # @todo cache data
-        stats = {}
-        if rawdata['status'] == 'data':
-            # @todo: check date and request refresh if to old
-            stats = rawdata['stats']
-        elif rawdata['status'] == 'notfound':
-            # @todo: request update/find player and try again
-            self._plugin.debug('Player not found.')
-        elif rawdata['status'] == 'error':
-            err = rawdata['error']
-            self._plugin.debug('Error: %s', err)
-        return stats, rawdata['status']
+        self.verify_data()
+        return self.player_stats, self.rawdata['status']
 
-    def player_update(self, player):
-        """Initiate playerupdate"""
-        post_data = {}
-        post_data['ident'] = self.ident
-        post_data['time'] = int(time.time())
-        post_data['player'] = player
-        return self._signed_request(post_data, data_group='playerupdate')
+    def _request_playerupdate(self):
+        """Request playerupdate"""
+        post_data = { 'ident': self.ident, 'time': int(time.time()), 'player': self._player_name }
+        self._playerupdate_results = self._signed_request(post_data, data_group='playerupdate')
+
+    def do_playerupdate(self):
+        # request playerupdate
+        self._plugin.debug('Request playerupdate for %s', self._player_name)
+        self._request_playerupdate()
+        # @todo: handle status.timeout
+        retry = 1
+        while self._playerupdate_results['task']['state'] == 'queued':
+            time.sleep(15)
+            self._request_playerupdate()
+            retry = retry + 1
+            if retry == 5:
+                self._plugin.debug('Request playerupdate for %s failed!', self._player_name)
+                status = 'error'
+                break
+        if self._playerupdate_results['task']['state'] == 'finished':
+            status = self._playerupdate_results['task']['result']
+        self._plugin.debug('Request playerupdate done. Status: %s', status)
+        return status
 
     def _base64_url_encode(self, data):
         return base64.urlsafe_b64encode(data).rstrip('=')
 
+    # handle status
+    def verify_data(self):
+        handle_status = {
+                'notfound': self._handle_status_notfound,
+                'data': self._handle_status_data,
+                'pifound': self._handle_status_pifound,
+                'error': self._handle_status_error,
+                }
+        status = self.rawdata['status']
+        handle_status[status]()
 
+    def _handle_status_data(self):
+        sec = 86400 # 1 day
+        last_update =  self.rawdata['stats']['date_update']
+        self._plugin.debug('%s ´s stats last updated: %s', self._player_name, time.ctime(last_update))
+        self.player_stats = self.rawdata['stats']
 
-#    def _verify_status(self):
-#        # check if data a dict and has status key
-#        if type(data).__name__ == 'dict' and 'status' in data:
-#            if data['status'] == 'data':
-#                return True
-#            elif data['status'] == 'notfound':
-#                # @todo request update and try again
-#                self._plugin.debug('Status: Player not found')
-#                return False
-#            elif data['status'] == 'error':
-#                self._plugin.debug('Error: %s, reasons: %s' % ( data['error'], data['reasons'] ))
-#                return False
-#            else:
-#                self._plugin.debug('Unknown status %s - Please send output to developer' % data['status'])
-#                return False
+    def _handle_status_notfound(self):
+        self._plugin.debug('Player not found!')
+        self.do_playerupdate()
+
+    def _handle_status_pifound(self):
+        self._plugin.debug('%s found in the player index, but no data currently available.', self._player_name)
+        self.do_playerupdate()
+        self.get_player_stats(self._player_name)
+
+    def _handle_status_error(self):
+        err = self.rawdata['error']
+        self._plugin.debug('Error: %s', err)
 
 
 if __name__ == '__main__':
@@ -205,7 +226,7 @@ if __name__ == '__main__':
         print api.get_player_stats(player)
 
     def _test_player_update(player='O2ON'):
-        print api.player_update(player)
+        print api.playerupdate(player)
 
     #superadmin.says('!bfstats')
 
